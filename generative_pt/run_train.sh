@@ -6,7 +6,7 @@
 ################################################################################
 
 # set gpu id to use
-export CUDA_VISIBLE_DEVICES=0
+# export CUDA_VISIBLE_DEVICES=0
 
 # generalizes target_a/target_b of goal for all outputs, replaces them with slot mark
 TOPIC_GENERALIZATION=1
