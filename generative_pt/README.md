@@ -44,7 +44,7 @@ Test model with the following commands.
 sh run_test.sh
 ```
 
-you can choose which gpu to use with command lien option --gpu_id
+you can choose which gpu to use with command line option --gpu_id with both training and testing script.
 
 ### Note !!!
 
