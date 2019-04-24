@@ -85,6 +85,7 @@ class Field(object):
 class NumberField(Field):
     """
     NumberField
+    Just convert between str type number and real number
     """
     def __init__(self,
                  sequential=False,

@@ -162,6 +162,7 @@ class Corpus(object):
         valid_raw = self.read_data(valid_file, data_type="valid")
         test_raw = self.read_data(test_file, data_type="test")
         vocab = self.build_vocab(train_raw)
+        # 仅用训练数据构建词典
 
         print("Building TRAIN examples ...")
         train_data = self.build_examples(train_raw)
@@ -209,6 +210,7 @@ class Corpus(object):
 class SrcTgtCorpus(Corpus):
     """
     SrcTgtCorpus
+    Every example only has src and tat
     """
     def __init__(self,
                  data_dir,
@@ -230,6 +232,8 @@ class SrcTgtCorpus(Corpus):
         self.SRC = TextField(tokenize_fn=tokenize,
                              embed_file=embed_file)
         if self.share_vocab:
+            # share_vocab is false means different vocab,
+            # but still same embedding
             self.TGT = self.SRC
         else:
             self.TGT = TextField(tokenize_fn=tokenize,

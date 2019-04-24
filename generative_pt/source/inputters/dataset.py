@@ -39,7 +39,10 @@ class Dataset(torch.utils.data.Dataset):
             collate
             """
             batch = Pack()
+            # batch is a dict
             for key in data_list[0].keys():
+                # data_list: a list of dict
+                # so one sample is one dict
                 batch[key] = list2tensor([x[key] for x in data_list])
             if device >= 0:
                 batch = batch.cuda(device=device)

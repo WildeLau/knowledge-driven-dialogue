@@ -15,7 +15,7 @@ import argparse
 
 class Pack(dict):
     """
-    Pack
+    Pack: a dict
     """
     def __getattr__(self, name):
         return self.get(name)
@@ -91,6 +91,7 @@ def list2tensor(X):
         return tensor
 
     tensor = torch.zeros(size, dtype=torch.long)
+    # padding with 0
     lengths = torch.zeros(size[:-1], dtype=torch.long)
     if len(size) == 2:
         for i, x in enumerate(X):
