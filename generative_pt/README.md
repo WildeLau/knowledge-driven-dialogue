@@ -35,6 +35,7 @@ Train model with the following commands.
 sh run_train.sh
 ```
 
+
 ### Step 3: Test the Model
 
 Test model with the following commands.
@@ -42,6 +43,8 @@ Test model with the following commands.
 ```bash
 sh run_test.sh
 ```
+
+you can choose which gpu to use with command lien option --gpu_id
 
 ### Note !!!
 
