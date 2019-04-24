@@ -21,7 +21,7 @@ do
 done
 
 # set gpu id to use
-echo export CUDA_VISIBLE_DEVICES=${gpu_id}
+export CUDA_VISIBLE_DEVICES=${gpu_id}
 
 # generalizes target_a/target_b of goal for all outputs, replaces them with slot mark
 TOPIC_GENERALIZATION=1

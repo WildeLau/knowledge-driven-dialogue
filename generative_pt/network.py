@@ -27,6 +27,7 @@ from source.utils.generator import TopKGenerator
 from source.utils.engine import evaluate, evaluate_generation
 from source.utils.misc import str2bool
 
+
 def model_config():
     """
     model_config
@@ -126,6 +127,13 @@ def main():
         config.batch_size, "valid", shuffle=False, device=device)
     test_iter = corpus.create_batches(
         config.batch_size, "test", shuffle=False, device=device)
+    # print a example of batch
+    for _, batch in enumerate(train_iter):
+        print("---------------batch data example---------------")
+        for k in batch.keys():
+            print(k, ": ", str(batch[k]), "\n")
+        break
+
     # Model definition
     model = KnowledgeSeq2Seq(src_vocab_size=corpus.SRC.vocab_size,
                              tgt_vocab_size=corpus.TGT.vocab_size,

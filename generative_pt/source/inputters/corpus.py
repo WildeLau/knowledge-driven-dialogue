@@ -58,6 +58,7 @@ class Corpus(object):
     def reload(self, data_type='test'):
         """
         reload
+        训练时把demo.test覆盖了，测试时不用删除，reload会重新搞的
         """
         data_file = os.path.join(self.data_dir, self.data_prefix + "." + data_type)
         data_raw = self.read_data(data_file, data_type="test")
@@ -121,6 +122,8 @@ class Corpus(object):
                     field_data_dict[field] += xs
 
         vocab_dict = {}
+        # vocab_dict: vocab of different field.
+        # the vocab of src, tgr, cue are different
         for name, field in self.fields.items():
             if field in field_data_dict:
                 print("Building vocabulary of field {} ...".format(name.upper()))
@@ -164,12 +167,29 @@ class Corpus(object):
         vocab = self.build_vocab(train_raw)
         # 仅用训练数据构建词典
 
+        # print one example of raw data
+        print("---------------train_raw data example---------------")
+        for k in train_raw[0].keys():
+            print(k, ": ", train_raw[0][k], "\n")
+        # print the structure of vocab
+        print(
+            "---------------structure of vocab---------------\n" +
+            "\t".join(["name"] + list(vocab.keys())) + "\n" +
+            "\t".join(
+                ["capacity"] + [str(len(vocab[key])) for key in vocab.keys()])
+        )
+
+        # text to vectors, same structure with raw data
         print("Building TRAIN examples ...")
         train_data = self.build_examples(train_raw)
         print("Building VALID examples ...")
         valid_data = self.build_examples(valid_raw)
         print("Building TEST examples ...")
         test_data = self.build_examples(test_raw)
+        # print one example of sample data
+        print("---------------train_data example---------------")
+        for k in train_data[0].keys():
+            print(k, ": ", str(train_data[0][k]), "\n")
 
         data = {"train": train_data,
                 "valid": valid_data,
@@ -190,6 +210,7 @@ class Corpus(object):
         """
         try:
             data = self.data[data_type]
+            # data: a pytorch Dataset
             data_loader = data.create_batches(batch_size, shuffle, device)
             return data_loader
         except KeyError:
@@ -337,6 +358,7 @@ class KnowledgeCorpus(Corpus):
         with open(data_file, "r", encoding="utf-8") as f:
             for line in f:
                 if self.with_label:
+                    # with_label 已经废弃了
                     src, tgt, knowledge, label = line.strip().split('\t')[:4]
                     filter_knowledge = []
                     for sent in knowledge.split(''):
