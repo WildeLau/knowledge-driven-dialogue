@@ -5,8 +5,23 @@
 #
 ################################################################################
 
+# get arg from command line
+gpu_id=0
+while :
+do
+    case "$1" in
+      --gpu_id)
+	  gpu_id="$2"   # You may want to check validity of $2
+	  shift 2
+	  ;;
+      *)  # No more options
+	  break
+	  ;;
+    esac
+done
+
 # set gpu id to use
-# export CUDA_VISIBLE_DEVICES=0
+echo export CUDA_VISIBLE_DEVICES=${gpu_id}
 
 # generalizes target_a/target_b of goal for all outputs, replaces them with slot mark
 TOPIC_GENERALIZATION=1
