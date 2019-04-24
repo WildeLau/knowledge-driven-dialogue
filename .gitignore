@@ -112,3 +112,4 @@ launch.json
 config.json
 /.vscode
 .DS_store
+log.txt
