@@ -5,5 +5,5 @@ knowledge-driven-dialogue
 
 | baseline system | score | F1 | BLEU1/BLEU2 | DISTINCT1/DISTINCT2 |
 | --- | --- | --- | --- | --- |
-| generate_pt test | 0.894 | 35.92 | 0.341/0.194 | 0.067/0.142 |
-| generate_pt dev | 0.889 | 38.18 | 0.324/0.184 | 0.034/0.080 |
+| generate_pt test | 0.898 | 36.39 | 0.339/0.195 | 0.072/0.151 |
+| generate_pt dev | 0.876 | 35.26 | 0.332/0.191 | 0.035/0.090 |
