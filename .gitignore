@@ -112,4 +112,5 @@ launch.json
 config.json
 /.vscode
 .DS_store
-*.txt
+log/
+predict/
