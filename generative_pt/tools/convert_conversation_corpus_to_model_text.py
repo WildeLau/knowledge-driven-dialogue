@@ -52,8 +52,9 @@ def preprocessing_for_one_conversation(text,
     knowledge_str2 = '\1'.join([' '.join(spo) for spo in knowledge])
     history_str = ' '.join(history)
 
-    src = chat_path_str + " " + knowledge_str1 + " : " + history_str
+    # src = chat_path_str + " " + knowledge_str1 + " : " + history_str
     # src中加入knowledge和chat path是否合理？
+    src = chat_path_str + " : " + history_str
     model_text = '\t'.join([src, response, knowledge_str2])
 
     if topic_generalization:

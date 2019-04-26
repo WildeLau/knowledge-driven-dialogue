@@ -25,6 +25,7 @@ from source.utils.metrics import attn_accuracy
 from source.utils.metrics import perplexity
 from source.modules.attention import Attention
 
+
 class KnowledgeSeq2Seq(BaseModel):
     """
     KnowledgeSeq2Seq

@@ -84,14 +84,16 @@ def max_lens(X):
 def list2tensor(X):
     """
     list2tensor
+    X: a list of src/tgt/cue
     """
     size = max_lens(X)
+    # src: [batch, len(sentence)]
     if len(size) == 1:
         tensor = torch.tensor(X)
         return tensor
 
-    tensor = torch.zeros(size, dtype=torch.long)
     # padding with 0
+    tensor = torch.zeros(size, dtype=torch.long)
     lengths = torch.zeros(size[:-1], dtype=torch.long)
     if len(size) == 2:
         for i, x in enumerate(X):
