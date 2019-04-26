@@ -49,6 +49,7 @@ def model_config():
     net_arg.add_argument("--bidirectional", type=str2bool, default=True)
     net_arg.add_argument("--max_vocab_size", type=int, default=30000)
     net_arg.add_argument("--min_len", type=int, default=1)
+    # max_len是否太长？
     net_arg.add_argument("--max_len", type=int, default=500)
     net_arg.add_argument("--num_layers", type=int, default=1)
     net_arg.add_argument("--attn", type=str, default='dot',
@@ -113,11 +114,13 @@ def main():
     device = config.gpu
     torch.cuda.set_device(device)
     # Data definition
-    corpus = KnowledgeCorpus(data_dir=config.data_dir, data_prefix=config.data_prefix,
-                             min_freq=0, max_vocab_size=config.max_vocab_size,
-                             min_len=config.min_len, max_len=config.max_len,
-                             embed_file=config.embed_file, with_label=config.with_label,
-                             share_vocab=config.share_vocab)
+    corpus = KnowledgeCorpus(
+        data_dir=config.data_dir, data_prefix=config.data_prefix,
+        min_freq=0, max_vocab_size=config.max_vocab_size,
+        min_len=config.min_len, max_len=config.max_len,
+        embed_file=config.embed_file, with_label=config.with_label,
+        share_vocab=config.share_vocab
+    )
     corpus.load()
     if config.test and config.ckpt:
         corpus.reload(data_type='test')
@@ -135,26 +138,30 @@ def main():
         break
 
     # Model definition
-    model = KnowledgeSeq2Seq(src_vocab_size=corpus.SRC.vocab_size,
-                             tgt_vocab_size=corpus.TGT.vocab_size,
-                             embed_size=config.embed_size, hidden_size=config.hidden_size,
-                             padding_idx=corpus.padding_idx,
-                             num_layers=config.num_layers, bidirectional=config.bidirectional,
-                             attn_mode=config.attn, with_bridge=config.with_bridge,
-                             tie_embedding=config.tie_embedding, dropout=config.dropout,
-                             use_gpu=config.use_gpu, 
-                             use_bow=config.use_bow, use_dssm=config.use_dssm,
-                             use_pg=config.use_pg, use_gs=config.use_gs,
-                             pretrain_epoch=config.pretrain_epoch,
-                             use_posterior=config.use_posterior,
-                             weight_control=config.weight_control,
-                             concat=config.decode_concat)
+    model = KnowledgeSeq2Seq(
+        src_vocab_size=corpus.SRC.vocab_size,
+        tgt_vocab_size=corpus.TGT.vocab_size,
+        embed_size=config.embed_size, hidden_size=config.hidden_size,
+        padding_idx=corpus.padding_idx,
+        num_layers=config.num_layers, bidirectional=config.bidirectional,
+        attn_mode=config.attn, with_bridge=config.with_bridge,
+        tie_embedding=config.tie_embedding, dropout=config.dropout,
+        use_gpu=config.use_gpu,
+        use_bow=config.use_bow, use_dssm=config.use_dssm,
+        use_pg=config.use_pg, use_gs=config.use_gs,
+        pretrain_epoch=config.pretrain_epoch,
+        use_posterior=config.use_posterior,
+        weight_control=config.weight_control,
+        concat=config.decode_concat
+    )
     model_name = model.__class__.__name__
     # Generator definition
-    generator = TopKGenerator(model=model,
-                              src_field=corpus.SRC, tgt_field=corpus.TGT, cue_field=corpus.CUE,
-                              max_length=config.max_dec_len, ignore_unk=config.ignore_unk, 
-			      length_average=config.length_average, use_gpu=config.use_gpu)
+    generator = TopKGenerator(
+        model=model,
+        src_field=corpus.SRC, tgt_field=corpus.TGT, cue_field=corpus.CUE,
+        max_length=config.max_dec_len, ignore_unk=config.ignore_unk,
+        length_average=config.length_average, use_gpu=config.use_gpu
+    )
     # Interactive generation testing
     if config.interact and config.ckpt:
         model.load(config.ckpt)

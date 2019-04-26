@@ -93,8 +93,8 @@ class Corpus(object):
             if name in self.fields:
                 self.fields[name].load_vocab(vocab)
         print("Vocabulary size of fields:",
-              " ".join("{}-{}".format(name.upper(), field.vocab_size) 
-                for name, field in self.fields.items() 
+              " ".join("{}-{}".format(name.upper(), field.vocab_size)
+                for name, field in self.fields.items()
                     if isinstance(field, TextField)))
 
     def read_data(self, data_file, data_type=None):
@@ -126,7 +126,8 @@ class Corpus(object):
         # the vocab of src, tgr, cue are different
         for name, field in self.fields.items():
             if field in field_data_dict:
-                print("Building vocabulary of field {} ...".format(name.upper()))
+                print(
+                    "Building vocabulary of field {} ...".format(name.upper()))
                 if field.vocab_size == 0:
                     field.build_vocab(field_data_dict[field],
                                       min_freq=self.min_freq,

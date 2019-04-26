@@ -58,7 +58,8 @@ class Attention(nn.Module):
                 nn.Tanh())
 
     def __repr__(self):
-        main_string = "Attention({}, {}".format(self.query_size, self.memory_size)
+        main_string = "Attention({}, {}".format(
+            self.query_size, self.memory_size)
         if self.mode == "mlp":
             main_string += ", {}".format(self.hidden_size)
         main_string += ", mode='{}'".format(self.mode)
@@ -107,6 +108,7 @@ class Attention(nn.Module):
         if self.project:
             project_output = self.linear_project(
                 torch.cat([weighted_memory, query], dim=-1))
+                # TODO: 和定义对不上
             return project_output, weights
         else:
             return weighted_memory, weights

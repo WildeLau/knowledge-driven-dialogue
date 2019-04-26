@@ -30,11 +30,13 @@ class KnowledgeSeq2Seq(BaseModel):
     """
     KnowledgeSeq2Seq
     """
-    def __init__(self, src_vocab_size, tgt_vocab_size, embed_size, hidden_size, padding_idx=None,
-                 num_layers=1, bidirectional=True, attn_mode="mlp", attn_hidden_size=None, 
-                 with_bridge=False, tie_embedding=False, dropout=0.0, use_gpu=False, use_bow=False,
-                 use_kd=False, use_dssm=False, use_posterior=False, weight_control=False, 
-                 use_pg=False, use_gs=False, concat=False, pretrain_epoch=0):
+    def __init__(self, src_vocab_size, tgt_vocab_size, embed_size, hidden_size,
+                 padding_idx=None, num_layers=1, bidirectional=True,
+                 attn_mode="mlp", attn_hidden_size=None, with_bridge=False,
+                 tie_embedding=False, dropout=0.0, use_gpu=False,
+                 use_bow=False, use_kd=False, use_dssm=False,
+                 use_posterior=False, weight_control=False, use_pg=False,
+                 use_gs=False, concat=False, pretrain_epoch=0):
         super(KnowledgeSeq2Seq, self).__init__()
 
         self.src_vocab_size = src_vocab_size
@@ -60,23 +62,31 @@ class KnowledgeSeq2Seq(BaseModel):
         self.pretrain_epoch = pretrain_epoch
         self.baseline = 0
 
-        enc_embedder = Embedder(num_embeddings=self.src_vocab_size,
-                                embedding_dim=self.embed_size, padding_idx=self.padding_idx)
+        enc_embedder = Embedder(
+            num_embeddings=self.src_vocab_size,
+            embedding_dim=self.embed_size, padding_idx=self.padding_idx
+        )
 
-        self.encoder = RNNEncoder(input_size=self.embed_size, hidden_size=self.hidden_size,
-                                  embedder=enc_embedder, num_layers=self.num_layers,
-                                  bidirectional=self.bidirectional, dropout=self.dropout)
+        self.encoder = RNNEncoder(
+            input_size=self.embed_size, hidden_size=self.hidden_size,
+            embedder=enc_embedder, num_layers=self.num_layers,
+            bidirectional=self.bidirectional, dropout=self.dropout
+        )
 
         if self.with_bridge:
-            self.bridge = nn.Sequential(nn.Linear(self.hidden_size, self.hidden_size), nn.Tanh())
+            self.bridge = nn.Sequential(
+                nn.Linear(self.hidden_size, self.hidden_size), nn.Tanh()
+            )
 
         if self.tie_embedding:
             assert self.src_vocab_size == self.tgt_vocab_size
+            # 词表大小一样，不代表词表一样，这么做不觉得奇怪吗？
             dec_embedder = enc_embedder
             knowledge_embedder = enc_embedder
         else:
             dec_embedder = Embedder(num_embeddings=self.tgt_vocab_size,
-                                    embedding_dim=self.embed_size, padding_idx=self.padding_idx)
+                                    embedding_dim=self.embed_size,
+                                    padding_idx=self.padding_idx)
             knowledge_embedder = Embedder(num_embeddings=self.tgt_vocab_size,
                                           embedding_dim=self.embed_size,
                                           padding_idx=self.padding_idx)
@@ -88,6 +98,7 @@ class KnowledgeSeq2Seq(BaseModel):
                                             bidirectional=self.bidirectional,
                                             dropout=self.dropout)
 
+        # 此处为何硬编码为dot？
         self.prior_attention = Attention(query_size=self.hidden_size,
                                          memory_size=self.hidden_size,
                                          hidden_size=self.hidden_size,
@@ -98,11 +109,13 @@ class KnowledgeSeq2Seq(BaseModel):
                                              hidden_size=self.hidden_size,
                                              mode="dot")
 
-        self.decoder = RNNDecoder(input_size=self.embed_size, hidden_size=self.hidden_size,
-                                  output_size=self.tgt_vocab_size, embedder=dec_embedder,
-                                  num_layers=self.num_layers, attn_mode=self.attn_mode,
-                                  memory_size=self.hidden_size, feature_size=None,
-                                  dropout=self.dropout, concat=concat)
+        self.decoder = RNNDecoder(
+            input_size=self.embed_size, hidden_size=self.hidden_size,
+            output_size=self.tgt_vocab_size, embedder=dec_embedder,
+            num_layers=self.num_layers, attn_mode=self.attn_mode,
+            memory_size=self.hidden_size, feature_size=None,
+            dropout=self.dropout, concat=concat
+        )
         self.log_softmax = nn.LogSoftmax(dim=-1)
         self.softmax = nn.Softmax(dim=-1)
         self.sigmoid = nn.Sigmoid()
@@ -110,9 +123,16 @@ class KnowledgeSeq2Seq(BaseModel):
 
         if self.use_bow:
             self.bow_output_layer = nn.Sequential(
-                    nn.Linear(in_features=self.hidden_size, out_features=self.hidden_size),
+                    nn.Linear(
+                        in_features=self.hidden_size,
+                        out_features=self.hidden_size
+                    ),
                     nn.Tanh(),
-                    nn.Linear(in_features=self.hidden_size, out_features=self.tgt_vocab_size),
+                    # 直接转one-hot了吗？bow这么搞的啊
+                    nn.Linear(
+                        in_features=self.hidden_size,
+                        out_features=self.tgt_vocab_size
+                    ),
                     nn.LogSoftmax(dim=-1))
 
         if self.use_dssm:
@@ -123,12 +143,14 @@ class KnowledgeSeq2Seq(BaseModel):
         if self.use_kd:
             self.knowledge_dropout = nn.Dropout()
 
+        # 哪里要用weight？
         if self.padding_idx is not None:
             self.weight = torch.ones(self.tgt_vocab_size)
             self.weight[self.padding_idx] = 0
         else:
             self.weight = None
-        self.nll_loss = NLLLoss(weight=self.weight, ignore_index=self.padding_idx,
+        self.nll_loss = NLLLoss(weight=self.weight,
+                                ignore_index=self.padding_idx,
                                 reduction='mean')
         self.kl_loss = torch.nn.KLDivLoss(size_average=True)
 

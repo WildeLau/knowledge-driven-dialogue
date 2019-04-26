@@ -147,6 +147,7 @@ def one_hot(indice, num_classes):
     """
     one_hot
     """
+    # TODO: save memory
     I = torch.eye(num_classes).to(indice.device)
     T = I[indice]
     return T
